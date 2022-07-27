@@ -21,6 +21,7 @@
     "react-tooltip": "^4.2.13",
     "react-uuid": "^1.0.2",
     "remark-gfm": "^1.0.0",
+    "sweetalert": "^2.1.2",
     "timeago-react": "^3.0.2"
   },
   "scripts": {
