@@ -293,29 +293,39 @@ class App extends React.Component {
 
   async loginWithNearFi() {
     const keyStore = new nearAPI.keyStores.BrowserLocalStorageKeyStore();
-    let accessKey = await window.nearFiWallet.requestSignIn({
-      contractId: NearConfig.contractName,
-    });
-    if (accessKey && accessKey.accessKey) {
-      let keyPair = KeyPair.fromString(accessKey.accessKey.secretKey);
-      window.nearFiWallet.log("privateKey", keyPair.getPublicKey().toString());
-      let secretKey = accessKey.accessKey.secretKey;
-      keyStore.setKey(
-        NearConfig.networkId,
-        window.nearFiWallet.accountId,
-        KeyPair.fromString(secretKey)
-      );
-      window.localStorage.setItem(
-        `${NearConfig.contractName}_wallet_auth_key`,
-        JSON.stringify({
-          accountId: window.nearFiWallet.accountId,
-          allKeys: [KeyPair.fromString(secretKey).getPublicKey().toString()],
-        })
-      );
-      window.localStorage.setItem(
-        `near-api-js:keystore:${window.nearFiWallet.accountId}:${NearConfig.networkId}`,
-        secretKey
-      );
+    try {
+      let accessKey = await window.nearFiWallet.requestSignIn({
+        contractId: NearConfig.contractName,
+      });
+      if (accessKey && accessKey.accessKey) {
+        let keyPair = KeyPair.fromString(accessKey.accessKey.secretKey);
+        window.nearFiWallet.log(
+          "privateKey",
+          keyPair.getPublicKey().toString()
+        );
+        let secretKey = accessKey.accessKey.secretKey;
+        keyStore.setKey(
+          NearConfig.networkId,
+          window.nearFiWallet.accountId,
+          KeyPair.fromString(secretKey)
+        );
+        window.localStorage.setItem(
+          `${NearConfig.contractName}_wallet_auth_key`,
+          JSON.stringify({
+            accountId: window.nearFiWallet.accountId,
+            allKeys: [KeyPair.fromString(secretKey).getPublicKey().toString()],
+          })
+        );
+        window.localStorage.setItem(
+          `near-api-js:keystore:${window.nearFiWallet.accountId}:${NearConfig.networkId}`,
+          secretKey
+        );
+      }
+    } catch (e) {
+      if (window.nearFiWallet) {
+        window.nearFiWallet.log('e', e)
+      } else {
+      }
     }
     await this.initWithKeystore(keyStore);
   }
@@ -356,9 +366,9 @@ class App extends React.Component {
 
   getWalletTitle() {
     if (isMobileExplorer()) {
-      return "Sign in with NearFi Wallet"
+      return "Sign in with NearFi Wallet";
     }
-    return "Sign in with NEAR Wallet"
+    return "Sign in with NEAR Wallet";
   }
 
   render() {
